@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Basketball Prediction Tool</title>
+
+<style>
+
+body{
+    
+font-family:Arial;
+background:#0f172a;
+color:white;
+padding:30px;
+}
+
+
+.container{
+max-width:650px;
+margin:auto;
+background:#1e293b;
+padding:25px;
+border-radius:10px;
+}
+
+input,select,button{
+width:100%;
+padding:10px;
+margin-top:8px;
+margin-bottom:15px;
+border-radius:6px;
+border:none;
+}
+
+button{
+background:#22c55e;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+.result{
+margin-top:20px;
+background:#cad61f;
+padding:15px;
+border-radius:8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>ACE BOY PREDICTIONS -----  ALWAYS WIN BRO</h2>
+
+<label>Tournament</label>
+<input id="tournament">
+
+<label>Home Team</label>
+<input id="homeTeam">
+
+<label>Away Team</label>
+<input id="awayTeam">
+
+<h3>Home Last 5 Points</h3>
+
+<input id="h1">
+<input id="h2">
+<input id="h3">
+<input id="h4">
+<input id="h5">
+
+<h3>Home Results</h3>
+
+<select id="hr1"><option>win</option><option>loss</option></select>
+<select id="hr2"><option>win</option><option>loss</option></select>
+<select id="hr3"><option>win</option><option>loss</option></select>
+<select id="hr4"><option>win</option><option>loss</option></select>
+<select id="hr5"><option>win</option><option>loss</option></select>
+
+<h3>Away Last 5 Points</h3>
+
+<input id="a1">
+<input id="a2">
+<input id="a3">
+<input id="a4">
+<input id="a5">
+
+<h3>Away Results</h3>
+
+<select id="ar1"><option>win</option><option>loss</option></select>
+<select id="ar2"><option>win</option><option>loss</option></select>
+<select id="ar3"><option>win</option><option>loss</option></select>
+<select id="ar4"><option>win</option><option>loss</option></select>
+<select id="ar5"><option>win</option><option>loss</option></select>
+
+<button onclick="analyze()">Analyze Match</button>
+
+<div class="result" id="output"></div>
+
+</div>
+
+<script>
+
+function calculate(points,results){
+
+let total=0
+let adjust=0
+
+for(let i=0;i<5;i++){
+
+total+=points[i]
+
+if(results[i]=="win"){
+adjust+=0.5
+}else{
+adjust-=1.5
+}
+
+}
+
+let avg=total/5
+
+return avg+adjust
+}
+
+function getDecimal(num){
+return Number((num % 1).toFixed(1))
+}
+
+function getAdvice(h,a){
+
+// make patterns order independent
+let arr=[h,a].sort()
+
+let d1=arr[0]
+let d2=arr[1]
+
+let advice=""
+
+if(d1==0.3 && d2==0.5){
+advice="Go bigger points (wins), Narrow scoring High/Low handicap, Team over"
+}
+
+else if(d1==0.5 && d2==0.5){
+advice="Go bigger points (wins), Both scoring High, Possible Handicap"
+}
+
+else if(d1==0.1 && d2==0.9){
+advice="Go bigger points (wins), Both scoring High, Team Overs"
+}
+
+else if(d1==0.5 && d2==0.9){
+advice="Handicap High, Possible Team Over"
+}
+
+else if(d1==0.1 && d2==0.3){
+advice="Bigger points wins if capable, Handicap if teams lower scoring"
+}
+
+else if(d1==0.3 && d2==0.9){
+advice="Go points wins, Slightly bigger points Team Over"
+}
+
+else if(d1==0.7 && d2==0.9){
+advice="Go bigger points wins, Both scoring High, Team Overs"
+}
+
+else if(d1==0.3 && d2==0.3){
+advice="Lower points handicap, Team over if points same on platform, High scoring Over"
+}
+
+else if(d1==0.1 && d2==0.5){
+advice="Go bigger points wins, Bigger points team over, Possible game overs"
+}
+
+else if(d1==0.3 && d2==0.7){
+advice="Go bigger points wins, Bigger points team overs, Possible game overs"
+}
+
+else if(d1==0.7 && d2==0.7){
+advice="Go bigger points wins, Slight total game overs, Handicaps"
+}
+
+else if(d1==0.1 && d2==0.7){
+advice="Go bigger points wins, Both scoring higher, Bigger team overs"
+}
+
+else if(d1==0.9 && d2==0.9){
+advice="Go bigger points wins, Bigger points team overs, Possible game overs"
+}
+
+else if(d1==0.1 && d2==0.1){
+advice="High handicap probability, Slight game overs"
+}
+
+else{
+advice="No betting pattern detected"
+}
+
+return advice
+}
+
+
+function analyze(){
+
+let homePoints=[
+Number(h1.value),
+Number(h2.value),
+Number(h3.value),
+Number(h4.value),
+Number(h5.value)
+]
+
+let homeResults=[
+hr1.value,
+hr2.value,
+hr3.value,
+hr4.value,
+hr5.value
+]
+
+let awayPoints=[
+Number(a1.value),
+Number(a2.value),
+Number(a3.value),
+Number(a4.value),
+Number(a5.value)
+]
+
+let awayResults=[
+ar1.value,
+ar2.value,
+ar3.value,
+ar4.value,
+ar5.value
+]
+
+let homeScore=calculate(homePoints,homeResults)
+let awayScore=calculate(awayPoints,awayResults)
+
+let prediction=""
+
+if(homeScore>awayScore){
+prediction="Home Team Advantage"
+}else{
+prediction="Away Team Advantage"
+}
+
+let hDec=getDecimal(homeScore)
+let aDec=getDecimal(awayScore)
+
+let bettingAdvice=getAdvice(hDec,aDec)
+
+output.innerHTML=`
+
+<h3>Results</h3>
+
+Home Score: ${homeScore.toFixed(2)} <br>
+Away Score: ${awayScore.toFixed(2)} <br><br>
+
+Prediction: <b>${prediction}</b>
+
+<h3>Decimal Pattern</h3>
+
+${hDec} vs ${aDec}
+
+<h3>Betting Insight</h3>
+
+${bettingAdvice}
+
+`
+
+}
+
+</script>
+
+</body>
+</html>
