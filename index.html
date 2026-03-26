@@ -1,227 +1,49 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-<title>Basketball Prediction Tool</title>
-
-<style>
-
-body{
-font-family:Arial;
-background:#0f172a;
-color:white;
-padding:30px;
-}
-
-.container{
-max-width:600px;
-margin:auto;
-background:#1e293b;
-padding:25px;
-border-radius:10px;
-}
-
-input,select,button{
-width:100%;
-padding:10px;
-margin-top:8px;
-margin-bottom:15px;
-border-radius:6px;
-border:none;
-}
-
-button{
-background:#22c55e;
-color:white;
-font-size:16px;
-cursor:pointer;
-}
-
-.result{
-margin-top:20px;
-background:#334155;
-padding:15px;
-border-radius:8px;
-}
-
-</style>
+    <title>Basketball Match Predictor</title>
+    <style>
+        body { font-family: Arial; background: #0f172a; color: white; padding: 30px; }
+        .container { max-width: 900px; margin:auto; background:#1e293b; padding:20px; border-radius:10px; }
+        input, button, select { width: 100%; padding:10px; margin:5px 0; border-radius:6px; border:none; }
+        button { background:#22c55e; color:white; cursor:pointer; font-size:16px; }
+        .manual, .sofaPrediction { background:#334155; padding:10px; margin-top:10px; border-radius:6px; }
+        .match-row { display:flex; gap:10px; margin-bottom:5px; }
+        .match-row input { width:60%; }
+        .match-row select { width:35%; }
+        #result, #sofaResult { margin-top:20px; background:#475569; padding:15px; border-radius:6px; }
+        h3 { margin-top:15px; }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
+    <h2>Basketball Match Predictor</h2>
 
-<h2>Basketball Prediction Tool</h2>
+    <!-- Panel 1: Manual + dynamic prediction -->
+    <label>Enter Match (TeamA vs TeamB)</label>
+    <input id="matchInput" placeholder="Example: Lakers vs Warriors">
+    <button onclick="predictMatch()">Predict Match (Manual/Auto)</button>
 
-<label>Tournament</label>
-<input id="tournament">
+    <div class="manual">
+        <h3>Manual Input for Last 5 Matches (Optional)</h3>
+        <div id="homeManual"></div>
+        <div id="awayManual"></div>
+        <button onclick="addManualMatches()">Add 5 Input Rows for Both Teams</button>
+    </div>
 
-<label>Home Team</label>
-<input id="homeTeam">
+    <div id="result"></div>
 
-<label>Away Team</label>
-<input id="awayTeam">
-
-<h3>Home Last 5 Points</h3>
-
-<input id="h1">
-<input id="h2">
-<input id="h3">
-<input id="h4">
-<input id="h5">
-
-<h3>Home Results</h3>
-
-<select id="hr1">
-<option>win</option>
-<option>loss</option>
-</select>
-
-<select id="hr2">
-<option>win</option>
-<option>loss</option>
-</select>
-
-<select id="hr3">
-<option>win</option>
-<option>loss</option>
-</select>
-
-<select id="hr4">
-<option>win</option>
-<option>loss</option>
-</select>
-
-<select id="hr5">
-<option>win</option>
-<option>loss</option>
-</select>
-
-<h3>Away Last 5 Points</h3>
-
-<input id="a1">
-<input id="a2">
-<input id="a3">
-<input id="a4">
-<input id="a5">
-
-<h3>Away Results</h3>
-
-<select id="ar1">
-<option>win</option>
-<option>loss</option>
-</select>
-
-<select id="ar2">
-<option>win</option>
-<option>loss</option>
-</select>
-
-<select id="ar3">
-<option>win</option>
-<option>loss</option>
-</select>
-
-<select id="ar4">
-<option>win</option>
-<option>loss</option>
-</select>
-
-<select id="ar5">
-<option>win</option>
-<option>loss</option>
-</select>
-
-<button onclick="analyze()">Analyze Match</button>
-
-<div class="result" id="output"></div>
-
+    <!-- Panel 2: SofaScore Official Algorithm -->
+    <div class="sofaPrediction">
+        <h3>SofaScore Official Algorithm Prediction</h3>
+        <label>Enter Match (TeamA vs TeamB)</label>
+        <input id="sofaMatchInput" placeholder="Example: Lakers vs Warriors">
+        <button onclick="sofaScorePrediction()">Predict via SofaScore Algorithm</button>
+        <div id="sofaResult"></div>
+    </div>
 </div>
 
-<script>
-
-function calculate(points,results){
-
-let total=0
-let adjust=0
-
-for(let i=0;i<5;i++){
-
-total+=points[i]
-
-if(results[i]=="win"){
-adjust+=0.5
-}else{
-adjust-=1.5
-}
-
-}
-
-let avg=total/5
-
-return avg+adjust
-
-}
-
-function analyze(){
-
-let homePoints=[
-Number(h1.value),
-Number(h2.value),
-Number(h3.value),
-Number(h4.value),
-Number(h5.value)
-]
-
-let homeResults=[
-hr1.value,
-hr2.value,
-hr3.value,
-hr4.value,
-hr5.value
-]
-
-let awayPoints=[
-Number(a1.value),
-Number(a2.value),
-Number(a3.value),
-Number(a4.value),
-Number(a5.value)
-]
-
-let awayResults=[
-ar1.value,
-ar2.value,
-ar3.value,
-ar4.value,
-ar5.value
-]
-
-let homeScore=calculate(homePoints,homeResults)
-let awayScore=calculate(awayPoints,awayResults)
-
-let prediction=""
-
-if(homeScore>awayScore){
-prediction="Home Team Advantage"
-}else{
-prediction="Away Team Advantage"
-}
-
-output.innerHTML=`
-
-<h3>Results</h3>
-
-Home Score: ${homeScore.toFixed(2)} <br>
-Away Score: ${awayScore.toFixed(2)} <br><br>
-
-Prediction: <b>${prediction}</b>
-
-`
-
-}
-
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
